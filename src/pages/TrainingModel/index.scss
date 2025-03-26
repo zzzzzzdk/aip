@@ -1,0 +1,67 @@
+.training-model-page {
+  background: transparent;
+
+  .search-form {
+    border-bottom: 1px solid #EBEBEB;
+    .ant-form-item {
+      width: 250px;
+    }
+
+    .ant-form-item-label {
+      padding-bottom: 4px;
+      font-weight: 500;
+    }
+  }
+
+  .result-box {
+    margin-top: 16px;
+    .result-title {
+      display: flex;
+      margin-bottom: 10px;
+      &-count {
+        flex: 1;
+        line-height: 32px;
+        background-color: rgba(51,119,255, .1);
+        padding: 0 6px;
+        color: var(--);
+      }
+      &-btn {
+        width: 108px;
+        margin-left: 10px;
+      }
+    }
+  }
+  .status-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+
+    &.success {
+      color: #52c41a;
+      background: #f6ffed;
+      border: 1px solid #b7eb8f;
+    }
+
+    &.processing {
+      color: #1890ff;
+      background: #e6f7ff;
+      border: 1px solid #91d5ff;
+    }
+  }
+
+  .ant-table-wrapper {
+    
+    // .ant-table-thead > tr > th {
+    //   background: #fafafa;
+    //   font-weight: 500;
+    // }
+  }
+
+  .ant-card {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+    }
+  }
+}

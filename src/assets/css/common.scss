@@ -1,0 +1,135 @@
+@import "./variables.scss";
+@import "./mixins.scss";
+
+// 全局样式
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: $bg-color;
+  color: $text-color;
+  font-size: $font-size-base;
+  overflow: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// 全局加载动画样式
+.global-spin {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+// 通用样式类
+.flex-center {
+  @include flex(row, center, center);
+}
+
+.text-ellipsis {
+  @include text-ellipsis;
+}
+
+.card {
+  @include card;
+}
+
+// 响应式布局
+@include respond-to("phone") {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@include respond-to("tablet") {
+  .hide-on-tablet {
+    display: none !important;
+  }
+}
+
+@include respond-to("desktop") {
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .ant-btn {
+    min-width: 120px;
+  }
+
+  .ant-input-search {
+    .ant-input-outlined {
+      border-radius: var(--ant-border-radius);
+    }
+
+    .anticon-search {
+      font-size: 16px;
+      color: var(--ant-color-text-secondary);
+    }
+
+    .ant-input-group-addon {
+      display: none;
+    }
+  }
+}
+
+.result-box {
+  .table-common {
+    color: red;
+    .ant-table-body {
+      overflow: auto !important;
+      @include scrollBar();
+    }
+
+    .ant-table-thead tr th {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border-right-color: transparent !important;
+
+      &:last-child {
+        border-right-color: var(--ant-table-border-color) !important;
+      }
+    }
+
+    .ant-table-tbody tr td {
+      word-break: break-all !important;
+    }
+
+    .more_judge {
+      span {
+        display: inline-block;
+        padding: 0 10px;
+        color: var(--ant-color-primary);
+        position: relative;
+        cursor: pointer;
+      }
+
+      .del {
+        color: var(--ant-color-error);
+      }
+    }
+  }
+
+  .pagination-common {
+    padding: 16px 0;
+    display: flex;
+    justify-content: center;
+  }
+}

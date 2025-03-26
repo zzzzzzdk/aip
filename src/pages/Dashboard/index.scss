@@ -1,0 +1,19 @@
+.dashboard-page {
+  padding: 24px;
+  background: #f0f2f5;
+  min-height: 100vh;
+
+  .ant-card {
+    height: 100%;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .ant-statistic {
+      text-align: center;
+    }
+  }
+} 
