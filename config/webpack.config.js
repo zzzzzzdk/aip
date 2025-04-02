@@ -26,7 +26,11 @@ const ForkTsCheckerWebpackPlugin =
     : require("react-dev-utils/ForkTsCheckerWebpackPlugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
+
 const createEnvironmentHash = require("./webpack/persistentCache/createEnvironmentHash");
+
+const appPackageJson = require(paths.appPackageJson);
+
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
@@ -197,7 +201,7 @@ module.exports = function (webpackEnv) {
       ? shouldUseSourceMap
         ? "source-map"
         : false
-      : isEnvDevelopment && "cheap-module-source-map",
+      : isEnvDevelopment && "eval-source-map",
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: paths.appIndexJs,

@@ -9,7 +9,7 @@ export const AuthGuard = ({ children, data }) => {
   const isAuthenticated = true; // 示例：替换为实际的认证状态
 
   useEffect(() => {
-    console.log("AuthGuard", data);
+    // console.log("AuthGuard", data);
     dispatch(setRouterData(data));
   }, [data]);
 

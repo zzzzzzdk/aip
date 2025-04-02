@@ -7,7 +7,8 @@ import { AuthGuard, PublicGuard } from "./guards";
 const RouterView = () => {
   const renderRoutes = (routes) => {
     return routes.map((route, index) => {
-      const Guard = route.private ? AuthGuard : PublicGuard;
+      const Guard = route.public ? PublicGuard : AuthGuard;
+      // const Guard = AuthGuard;
 
       return (
         <Route

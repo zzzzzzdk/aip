@@ -1,0 +1,55 @@
+@import "@/assets/css/mixins.scss";
+
+.training-task-layout {
+  height: 100%;
+
+  .training-task-content {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .training-task-form-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    @include scrollbar();
+  }
+  .training-task-form {
+    max-width: 700px;
+    margin: 0 auto;
+
+    .ant-form-item {
+      .ant-form-item-label {
+        width: 110px;
+      }
+      .ant-form-item-control-input-content {
+        .ant-input,
+        .ant-select,
+        .ant-input-number {
+          width: 300px;
+        }
+        .box-selector {
+          width: 384px;
+        }
+      }
+    }
+  }
+
+  .box-selector {
+    .box-selector-tools {
+      margin-top: 16px;
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .training-task-footer {
+    padding-top: 16px;
+    display: flex;
+    justify-content: center;
+    button {
+      width: 120px;
+    }
+  }
+}

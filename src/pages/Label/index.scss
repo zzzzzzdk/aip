@@ -1,0 +1,158 @@
+@import "@/assets/css/mixins.scss";
+
+.label-page {
+  
+  &-content {
+    display: flex;
+
+    .label-group-list {
+      width: 380px;
+      border-radius: 0;
+      border-left: none;
+      border-top: none;
+      border-bottom: none;
+      display: flex;
+      flex-direction: column;
+
+      .ant-card-head {
+        padding: 0 16px;
+      }
+      .ant-card-body {
+        padding: 0;
+        flex: 1;
+        overflow-y: auto;
+        @include scrollbar();
+      }
+
+      .ant-list-header {
+        .add-group-input {
+          padding: 8px 16px;
+          display: flex;
+          justify-content: space-between;
+
+          input {
+            width: 180px;
+          }
+          .add-group-btn {
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+
+      // 统一的标签组样式
+      .ant-list-item {
+        padding: 8px 16px;
+
+        // 编辑状态和添加状态的输入框样式
+        .ant-input {
+          width: 180px;
+        }
+
+        // 操作按钮样式
+        .ant-list-item-action {
+          margin-left: 8px;
+
+          .ant-btn-link {
+            padding: 0 8px;
+            height: 24px;
+          }
+        }
+
+        // 标签组名称样式
+        .ant-typography {
+          flex: 1;
+          margin-right: 8px;
+          line-height: 36px;
+        }
+      }
+    }
+
+    .label-list {
+      flex: 1;
+      border: none;
+      display: flex;
+      flex-direction: column;
+
+      .ant-card-body {
+        flex: 1;
+        overflow-y: auto;
+        @include scrollbar();
+      }
+
+      .label-cards {
+        .label-card-item {
+          .ant-card-body {
+            padding: 16px;
+
+            .ant-list-item-meta-title {
+              margin: 0 0 16px 0;
+            }
+            .ant-list-item-meta-description {
+              .label-attribute {
+                width: 76px;
+                height: 32px;
+                line-height: 32px;
+                border: 1px solid #f0f0f0;
+                text-align: center;
+                border-radius: 4px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.label-attribute-modal {
+  .ant-modal-body {
+    .ant-collapse {
+      background-color: transparent;
+      .ant-collapse-item {
+        margin-bottom: 16px;
+        border: 1px solid #d9d9d9;
+        border-radius: 0;
+        .ant-collapse-header {
+          .ant-collapse-expand-icon {
+            line-height: 32px;
+            height: 32px;
+          }
+          .ant-form-item {
+            margin-bottom: 0;
+            width: 100%;
+          }
+        }
+        .ant-collapse-content {
+          .label-attributes {
+            padding-left: 16px;
+            // border: 1px dashed #d9d9d9;
+            // border-radius: 6;
+
+            .label-attribute-item-wrap {
+              padding-left: 66px;
+              .label-attribute-item {
+                display: flex;
+                .ant-form-item {
+                  flex: 1;
+                  .ant-form-item-row {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    .ant-form-item-label {
+                      line-height: 32px;
+                      padding: 0;
+                    }
+                    .ant-form-item-control {
+                      flex: 1;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

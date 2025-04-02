@@ -3,3 +3,7 @@ export { default as User } from './User';
 export { default as Settings } from './Settings';
 export { default as Dashboard } from './Dashboard';
 export { default as TrainingModel } from './TrainingModel';
+export { default as TrainingTask } from './TrainingTask';
+export { default as Dataset } from './Dataset';
+export { default as DatasetDetails } from './Dataset/Details';
+export { default as TrainingResult } from './TrainingResult';

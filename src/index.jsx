@@ -1,22 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { ConfigProvider } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
-import store from './store';
-import App from './App';
-import './assets/css/common.scss';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { ConfigProvider } from "antd";
+import zhCN from "antd/locale/zh_CN";
+import store from "./store";
+import App from "./App";
+import "./assets/css/common.scss";
+import reportWebVitals from "./reportWebVitals";
+import "@ant-design/v5-patch-for-react-19";
+import AntdConfigProvider from "./AntdConfigProvider";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ConfigProvider locale={zhCN}>
-        <App />
-      </ConfigProvider>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <AntdConfigProvider>
+      <App />
+    </AntdConfigProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

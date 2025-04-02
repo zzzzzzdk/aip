@@ -1,0 +1,16 @@
+@import "@/assets/css/mixins.scss";
+
+.table-transfer {
+  .ant-transfer-list {
+    .ant-table-empty {
+      .ant-table-cell {
+        border-bottom: none;
+      }
+    }
+
+    .ant-transfer-list-body {
+      overflow-y: auto;
+      @include scrollbar;
+    }
+  }
+}

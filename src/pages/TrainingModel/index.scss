@@ -3,9 +3,7 @@
 
   .search-form {
     border-bottom: 1px solid #EBEBEB;
-    .ant-form-item {
-      width: 250px;
-    }
+    
 
     .ant-form-item-label {
       padding-bottom: 4px;
@@ -15,21 +13,7 @@
 
   .result-box {
     margin-top: 16px;
-    .result-title {
-      display: flex;
-      margin-bottom: 10px;
-      &-count {
-        flex: 1;
-        line-height: 32px;
-        background-color: rgba(51,119,255, .1);
-        padding: 0 6px;
-        color: var(--);
-      }
-      &-btn {
-        width: 108px;
-        margin-left: 10px;
-      }
-    }
+    
   }
   .status-tag {
     display: inline-block;

@@ -10,6 +10,8 @@ import {
   ExperimentOutlined,
 } from "@ant-design/icons";
 import Breadcrumb from "@/components/Layout/Breadcrumb";
+import { menuItems } from "./menu.config";
+import { useSelector } from 'react-redux';
 import "./index.scss";
 
 const { Sider, Content } = Layout;
@@ -19,28 +21,32 @@ const LayoutComponent = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
-  const menuItems = [
-    {
-      key: "/",
-      icon: <HomeOutlined />,
-      label: "首页",
-    },
-    {
-      key: "/training-model",
-      icon: <ExperimentOutlined />,
-      label: "训练模型",
-    },
-    {
-      key: "/user",
-      icon: <UserOutlined />,
-      label: "用户管理",
-    },
-    {
-      key: "/settings",
-      icon: <SettingOutlined />,
-      label: "系统设置",
-    },
-  ];
+  const activeKey = useSelector((state) => {
+    return state.comment.routerData.name;
+  });
+  
+  // const menuItems = [
+  //   {
+  //     key: "/",
+  //     icon: <HomeOutlined />,
+  //     label: "首页",
+  //   },
+  //   {
+  //     key: "/training-model",
+  //     icon: <ExperimentOutlined />,
+  //     label: "训练模型",
+  //   },
+  //   {
+  //     key: "/user",
+  //     icon: <UserOutlined />,
+  //     label: "用户管理",
+  //   },
+  //   {
+  //     key: "/settings",
+  //     icon: <SettingOutlined />,
+  //     label: "系统设置",
+  //   },
+  // ];
 
   const handleMenuClick = ({ key }) => {
     navigate(key);
@@ -54,11 +60,20 @@ const LayoutComponent = () => {
         collapsed={collapsed}
         className="app-sider"
       >
-        <div className="logo">{!collapsed && <span>模型训练系统</span>}</div>
+        <div className="logo">
+          {!collapsed ? (
+            <>
+              <img src={"/static/images/logo.png"} alt="logo" />
+              <span>模型训练系统</span>
+            </>
+          ) : (
+            <img src={"/static/images/logo.png"} alt="logo" />
+          )}
+        </div>
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[location.pathname]}
+          selectedKeys={[activeKey]}
           items={menuItems}
           onClick={handleMenuClick}
         />

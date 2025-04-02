@@ -1,6 +1,7 @@
 import ajax from '@/utils/ajax'
-import createmodel from "./createmodel";
 import trainingmodel from './trainingmodel';
+import label from './label';
+import dataset from './dataset';
 
 const api = {
   common: {
@@ -72,7 +73,8 @@ const api = {
 }
 
 export default {
-  createmodel,
   trainingmodel,
+  label,
+  dataset,
   ...api
 }

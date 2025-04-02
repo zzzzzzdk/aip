@@ -18,9 +18,11 @@ import { useRequest, useHeight, useUrlState } from "@/hooks";
 import { createRandom, pageSizeOptions } from "@/utils";
 import { ResultFlow } from "@/components";
 import ajax from "@/services";
+import { useNavigate } from "react-router";
 import "./index.scss";
 
-const { getTrainingModelList } = ajax.trainingmodel;
+const { getTrainingModelList, deleteTrainingModel } = ajax.trainingmodel;
+const { getDataset } = ajax.dataset;
 const { Content } = Layout;
 
 const defaultResultData = {
@@ -28,20 +30,26 @@ const defaultResultData = {
   total: 0,
 };
 const TrainingModel = () => {
+  let navigate = useNavigate();
   const [form] = Form.useForm();
   const height = useHeight({
-    tableBox: 209,
-    table: 209 + 60,
+    tableBox: 240,
+    table: 240 + 60,
   });
-  const [searchForm, setSearchForm, searchFormRef, updateUrl] = useUrlState({
+  const defaultSearchForm = {
     pn: 1,
     pageSize: pageSizeOptions[0],
-    search: "",
-    serviceType: "",
-    connStatusType: "",
+    taskName: "",
+    taskType: "",
+    taskStatus: "",
+    dataset: [],
     sort: "",
     order: "",
-  });
+  };
+  const [searchForm, setSearchForm, searchFormRef, updateUrl] =
+    useUrlState(defaultSearchForm);
+
+  const [datasetList, setDatasetList] = useState([]);
 
   const [resultData, setResultData] = useState(defaultResultData);
 
@@ -80,7 +88,7 @@ const TrainingModel = () => {
   const onChange = (e) => {
     setSearchForm({
       ...searchForm,
-      search: e.target.value.trim(),
+      taskName: e.target.value.trim(),
     });
   };
 
@@ -88,7 +96,7 @@ const TrainingModel = () => {
     setSearchForm({
       ...searchForm,
       pn: 1,
-      search: value.trim(),
+      taskName: value.trim(),
     });
     getData();
   };
@@ -117,12 +125,20 @@ const TrainingModel = () => {
   };
 
   const handleDelete = (id) => {
-    console.log(id);
+    deleteTrainingModel({ id })
+      .then((res) => {
+        message.success(res.message || "删除成功");
+        getData();
+      })
+      .catch((err) => {
+        message.error(err.message || "删除失败");
+        console.log(err);
+      });
   };
 
   const handleReset = () => {
     setSearchForm({
-      ...searchForm,
+      ...defaultSearchForm,
       pn: 1,
     });
     getData();
@@ -140,21 +156,25 @@ const TrainingModel = () => {
   const columns = [
     {
       title: "任务名称",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "taskName",
+      key: "taskName",
     },
     {
       title: "任务类型",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "taskType",
+      key: "taskType",
     },
     {
       title: "任务状态",
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "taskStatus",
+      key: "taskStatus",
       render: (status) => {
-        const color = status === "训练完成" ? "success" : "processing";
-        return <span className={`status-tag ${color}`}>{status}</span>;
+        const color = status === 1 ? "success" : "processing";
+        return (
+          <span className={`status-tag ${color}`}>
+            {status == 1 ? "训练完成" : "训练中"}
+          </span>
+        );
       },
     },
     {
@@ -174,8 +194,18 @@ const TrainingModel = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button type="link">训练结果</Button>
-          <Button type="link">编辑</Button>
+          <Button
+            type="link"
+            onClick={() => navigate(`/training-result?id=${record.id}`)}
+          >
+            训练结果
+          </Button>
+          <Button
+            type="link"
+            onClick={() => navigate(`/training-task?id=${record.id}`)}
+          >
+            编辑
+          </Button>
           <Popconfirm
             title="确定要删除这个训练任务吗？"
             onConfirm={() => handleDelete(record.id)}
@@ -191,7 +221,26 @@ const TrainingModel = () => {
     },
   ];
 
+  // 获取训练集
+  const getDatasetList = () => {
+    getDataset()
+      .then((res) => {
+        console.log(res);
+        res.data.forEach((item, index) => {
+          item.key = createRandom();
+          item.label = item.dataSetName;
+          item.value = item.id;
+        });
+        setDatasetList(res.data);
+      })
+      .catch((err) => {
+        message.error(err.message || "获取训练集失败");
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
+    getDatasetList();
     getData();
   }, []);
 
@@ -199,16 +248,16 @@ const TrainingModel = () => {
     <Layout className="training-model-page">
       <Content>
         <Form form={form} layout="vertical" className="search-form">
-          <Form.Item label="关键词" name="keyword">
+          <Form.Item label="任务名称" name="keyword">
             <Input.Search
               enterButton="检索"
-              placeholder="请输入关键词"
+              placeholder="请输入任务名称"
               suffix={<SearchOutlined />}
               allowClear
               onChange={onChange}
               onSearch={onSearch}
               loading={ajaxLoading}
-              value={searchForm.search}
+              value={searchForm.taskName}
             />
           </Form.Item>
           <Form.Item label="任务类型" name="taskType">
@@ -220,6 +269,7 @@ const TrainingModel = () => {
                 { value: 2, label: "检测" },
               ]}
               onChange={(value) => handleSelectChange("taskType", value)}
+              value={searchForm.taskType}
             />
           </Form.Item>
           <Form.Item label="任务状态" name="taskStatus">
@@ -230,18 +280,17 @@ const TrainingModel = () => {
                 { value: 0, label: "训练中" },
                 { value: 1, label: "训练完成" },
               ]}
-              onChange={(value) => handleSelectChange("taskType", value)}
+              onChange={(value) => handleSelectChange("taskStatus", value)}
             />
           </Form.Item>
           <Form.Item label="训练集" name="dataset">
             <Select
               placeholder="请选择训练集"
               allowClear
-              options={[
-                { value: "人脸数据集", label: "人脸数据集" },
-                { value: "交通数据集", label: "交通数据集" },
-              ]}
-              onChange={(value) => handleSelectChange("taskType", value)}
+              mode="multiple"
+              maxTagCount={1}
+              options={datasetList}
+              onChange={(value) => handleSelectChange("dataset", value)}
             />
           </Form.Item>
           <Form.Item label=" " className="search-form-btn">
@@ -259,7 +308,9 @@ const TrainingModel = () => {
               共 <span>{resultData.total}</span> 条结果
             </span>
             <div className="result-title-btn">
-              <Button type="primary">创建训练任务</Button>
+              <Button type="primary" onClick={() => navigate("/training-task")}>
+                创建训练任务
+              </Button>
             </div>
           </div>
           <ResultFlow

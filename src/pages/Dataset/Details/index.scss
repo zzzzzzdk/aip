@@ -1,0 +1,11 @@
+@import "@/assets/css/mixins.scss";
+
+.dataset-details-content {
+  .ysd-result-flow {
+    overflow-y: auto;
+    @include scrollbar;
+    &-data {
+      padding-bottom: 16px;
+    }
+  }
+}

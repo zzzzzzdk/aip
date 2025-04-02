@@ -1,0 +1,38 @@
+.import-data-modal {
+  .ant-upload-drag {
+    height: 300px;
+  }
+
+  .ant-tabs-content {
+    min-height: 400px;
+  }
+
+  .ant-transfer {
+    justify-content: space-between;
+    .ant-transfer-list-footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+      .ant-pagination {
+        margin: 0;
+      }
+    }
+  }
+
+  .dynamic-delete-button {
+    color: #ff4d4f;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-left: 8px;
+
+    &:hover {
+      color: #ff7875;
+    }
+  }
+
+  .ant-form-item {
+    margin-bottom: 24px;
+  }
+} 
