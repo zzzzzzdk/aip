@@ -1,5 +1,5 @@
 {
-  "personName": "111",
+  "taskName": "111",
   "taskType": "classification",
   "targetType": "box",
   "idealAccuracy": 100,

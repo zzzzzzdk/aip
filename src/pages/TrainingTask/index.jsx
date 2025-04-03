@@ -115,11 +115,11 @@ const TrainingTask = () => {
             className="training-task-form"
           >
             <Form.Item
-              name="personName"
-              label="人员姓名"
-              rules={[{ required: true, message: "请输入人员姓名" }]}
+              name="taskName"
+              label="任务名称"
+              rules={[{ required: true, message: "请输入任务名称" }]}
             >
-              <Input placeholder="请输入人员姓名" />
+              <Input placeholder="请输入任务名称" />
             </Form.Item>
 
             <Form.Item
@@ -163,9 +163,9 @@ const TrainingTask = () => {
                     name="targetValue"
                     label=" "
                     colon={false}
-                    rules={[{ required: true, message: "请输入目标值" }]}
+                    rules={[{ required: true, message: "请输入内容" }]}
                   >
-                    <Input placeholder="请输入目标值" />
+                    <Input placeholder="请输入内容" />
                   </Form.Item>
                 ) : (
                   <Form.Item

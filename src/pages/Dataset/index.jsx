@@ -15,6 +15,7 @@ import {
   Layout,
   Tabs,
   Empty,
+  Popconfirm,
 } from "antd";
 import {
   PlusOutlined,
@@ -26,7 +27,7 @@ import {
   ExperimentOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
-import { createRandom, pageSizeOptions } from "@/utils";
+import { createRandom, pageSizeOptions, getParams } from "@/utils";
 import { useRequest, useHeight, useUrlState } from "@/hooks";
 import { ResultFlow, DatasetModal, ImportDataModal } from "@/components";
 import ajax from "@/services";
@@ -34,6 +35,8 @@ import { dataSetType } from "@/components/DatasetModal";
 import { useNavigate } from "react-router";
 import TableTransfer from "@/components/ImportDataModal/TableTransfer";
 import Dashboard from "@/pages/Dashboard";
+import { useDispatch, useSelector } from "react-redux";
+import { setRouterData } from "@/store/slices/comment";
 const { Option } = Select;
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -47,6 +50,8 @@ const { getDataset, deleteDataset, getDatasetDetail } = ajax.dataset;
 
 const Dataset = () => {
   let navigate = useNavigate();
+  const dispatch = useDispatch();
+  const routerData = useSelector((state) => state.comment.routerData);
   const height = useHeight({
     tableBox: 282,
     table: 334,
@@ -75,7 +80,7 @@ const Dataset = () => {
     debounceWait: 300,
     onBefore: (params) => {
       setResultData(defaultResultData);
-      // updateUrl();
+      updateUrl();
     },
     onSuccess: (res, params) => {
       if (Array.isArray(res.data)) {
@@ -119,7 +124,7 @@ const Dataset = () => {
 
   const handleSelectChange = (key, value) => {
     setSearchForm({ ...searchForm, [key]: value });
-    updateUrl({ [key]: value });
+    getData()
   };
 
   const changePn = (pn, pageSize) => {
@@ -149,7 +154,26 @@ const Dataset = () => {
   };
 
   const handleTrainingResult = (record) => {
-    navigate(`/dataset/details?id=${record.id}`);
+    dispatch(
+      setRouterData({
+        ...routerData,
+        breadcrumb: [
+          ...routerData.breadcrumb,
+          {
+            text: record.dataSetName,
+            path: `/dataset?form=${encodeURIComponent(
+              JSON.stringify(searchFormRef.current)
+            )}`,
+          },
+          {
+            text: "查看详情",
+          },
+        ],
+      })
+    );
+    navigate(
+      `/dataset/details?id=${record.id}&breadcrumbName=${record.dataSetName}`
+    );
   };
 
   const columns = [
@@ -215,14 +239,21 @@ const Dataset = () => {
           >
             编辑
           </Button>
-          <Button
-            type="link"
-            danger
-            // icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record)}
+          <Popconfirm
+            title="确定要删除这个数据集吗？"
+            onConfirm={() => handleDelete(record)}
+            okText="确定"
+            cancelText="取消"
           >
-            删除
-          </Button>
+            <Button
+              type="link"
+              danger
+              // icon={<DeleteOutlined />}
+              // onClick={() => handleDelete(record)}
+            >
+              删除
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -234,20 +265,20 @@ const Dataset = () => {
   };
 
   const handleDelete = (record) => {
-    Modal.confirm({
-      title: "确认删除",
-      content: `确定要删除数据集"${record.dataSetName}"吗？`,
-      onOk: () => {
-        deleteDataset({ id: record.id })
-          .then((res) => {
-            message.success(res.message || "删除成功");
-            getData();
-          })
-          .catch((err) => {
-            console.log(err.message || "删除失败");
-          });
-      },
-    });
+    // Modal.confirm({
+    //   title: "确认删除",
+    //   content: `确定要删除数据集"${record.dataSetName}"吗？`,
+    //   onOk: () => {
+    deleteDataset({ id: record.id })
+      .then((res) => {
+        message.success(res.message || "删除成功");
+        getData();
+      })
+      .catch((err) => {
+        console.log(err.message || "删除失败");
+      });
+    // },
+    // });
   };
 
   const handleModalOk = () => {
@@ -278,6 +309,7 @@ const Dataset = () => {
             placeholder="请选择数据类型"
             options={dataSetType}
             allowClear
+            value={searchForm.dataType || undefined}
             onChange={(value) => handleSelectChange("dataType", value)}
           />
         </Form.Item>
@@ -285,6 +317,7 @@ const Dataset = () => {
           <Select
             placeholder="请选择数据状态"
             allowClear
+            value={searchForm.status || undefined}
             onChange={(value) => handleSelectChange("status", value)}
           >
             <Option value="active">正常</Option>
@@ -295,6 +328,7 @@ const Dataset = () => {
           <Select
             placeholder="请选择训练集"
             allowClear
+            value={searchForm.trainingSet || undefined}
             onChange={(value) => handleSelectChange("trainingSet", value)}
           >
             <Option value="all">全部</Option>
@@ -369,11 +403,18 @@ const Dataset = () => {
 
   const renderPendingApproval = () => (
     <div className="pending-approval">
-      <Empty description="暂无待审批数据" />
+      <Empty description="暂无测试集数据" />
     </div>
   );
 
   useEffect(() => {
+    const params = getParams(window.location.search);
+    if (params.form) {
+      setSearchForm({
+        ...searchForm,
+        ...JSON.parse(decodeURIComponent(params.form)),
+      });
+    }
     getData();
   }, []);
 
@@ -389,7 +430,7 @@ const Dataset = () => {
           <TabPane tab="训练集" key="1">
             {renderTrainingSet()}
           </TabPane>
-          <TabPane tab="待审批" key="2">
+          <TabPane tab="测试集" key="2">
             {renderPendingApproval()}
           </TabPane>
         </Tabs>
@@ -398,15 +439,15 @@ const Dataset = () => {
           visible={isModalVisible}
           onCancel={() => {
             setIsModalVisible(false);
-
             setEditingDataset(null);
           }}
           onOk={handleModalOk}
-          editingDataset={editingDataset}
+          editingDataset={editingDataset} // 传递编辑中的数据集
         />
 
         <ImportDataModal
           visible={importModalVisible}
+          data={currentDataset}
           onCancel={() => {
             setImportModalVisible(false);
             setCurrentDataset(null);

@@ -1,0 +1,19 @@
+@import "@/assets/css/mixins.scss";
+
+.label-attribute-modal {
+  .ant-modal-body {
+    max-height: 600px;
+    overflow-y: auto;
+    @include scrollbar();
+    .ant-collapse-item {
+      .ant-collapse-header-text {
+        color: red;
+        & > div {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+}

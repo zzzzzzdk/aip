@@ -104,7 +104,7 @@ class TableTransfer extends React.Component {
           selectedKeys: listSelectedKeys,
           disabled: listDisabled,
         }) => {
-          console.log(direction, listSelectedKeys, "listSelectedKeys");
+          // console.log(direction, listSelectedKeys, "listSelectedKeys");
           const rowSelection = {
             getCheckboxProps: (item) => ({
               disabled: listDisabled || item.disabled,

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setRouterData } from "@/store/slices/comment";
+import { getParams } from "@/utils";
 
 export const AuthGuard = ({ children, data }) => {
   const dispatch = useDispatch();
@@ -9,8 +10,13 @@ export const AuthGuard = ({ children, data }) => {
   const isAuthenticated = true; // 示例：替换为实际的认证状态
 
   useEffect(() => {
+    const params = getParams(window.location.search);
     // console.log("AuthGuard", data);
-    dispatch(setRouterData(data));
+    if (params.breadcrumbName) {
+      // 在页面上自己处理面包屑
+    } else {
+      dispatch(setRouterData(data));
+    }
   }, [data]);
 
   if (!isAuthenticated) {

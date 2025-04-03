@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import { Breadcrumb } from 'antd'
 import { Link } from 'react-router-dom'
-
+import "./index.scss"
 
 export default () => {
 

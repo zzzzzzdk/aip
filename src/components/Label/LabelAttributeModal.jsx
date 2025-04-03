@@ -1,13 +1,9 @@
-import React from 'react';
-import { Modal, Form, Input, Button, Space, Collapse } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import React from "react";
+import { Modal, Form, Input, Button, Space, Collapse } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import "./index.scss";
 
-const LabelAttributeModal = ({
-  visible,
-  onOk,
-  onCancel,
-  form
-}) => {
+const LabelAttributeModal = ({ visible, onOk, onCancel, form }) => {
   return (
     <Modal
       title="添加标签属性"
@@ -18,11 +14,21 @@ const LabelAttributeModal = ({
       width={700}
     >
       <Form form={form} layout="vertical">
-        <Form.List name="attributes">
+        <Form.List
+          name="attributes"
+          initialValue={[
+            { name: "", attributeValues: [""] },
+          ]}
+        >
           {(fields, { add: addAttribute, remove: removeAttribute }) => (
             <Space direction="vertical" style={{ width: "100%" }}>
               <Collapse
                 bordered={false}
+                defaultActiveKey={["0"]}
+                // activeKey={['0']}
+                onChange={(key) => {
+                  console.log(key);
+                }}
                 items={fields.map((field, index) => ({
                   key: index,
                   label: (
@@ -40,7 +46,10 @@ const LabelAttributeModal = ({
                         <Button
                           type="link"
                           danger
-                          onClick={() => removeAttribute(field.name)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeAttribute(field.name);
+                          }}
                         >
                           删除
                         </Button>
@@ -53,7 +62,10 @@ const LabelAttributeModal = ({
                     <div className="label-attributes">
                       <Form.Item style={{ marginBottom: 0 }}>
                         <Form.List name={[field.name, "attributeValues"]}>
-                          {(subFields, { add: addValue, remove: removeValue }) => (
+                          {(
+                            subFields,
+                            { add: addValue, remove: removeValue }
+                          ) => (
                             <div className="label-attribute-item-wrap">
                               {subFields.map((subField, childIndex) => (
                                 <div
@@ -124,4 +136,4 @@ const LabelAttributeModal = ({
   );
 };
 
-export default LabelAttributeModal; 
+export default LabelAttributeModal;

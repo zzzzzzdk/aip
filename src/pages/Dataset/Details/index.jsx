@@ -33,6 +33,7 @@ const defaultResultData = {
 const DatasetDetails = () => {
   const location = useLocation()
   const idRef = useRef(getQueryString(location.search, 'id'))
+  const from = getQueryString(location.search, 'from');
   const height = useHeight({
     tableBox: 184,
   });

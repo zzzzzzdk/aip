@@ -8,7 +8,7 @@ const api = {
     return ajax({
       url: "/training-model/list",
       method: "get",
-      data: data,
+      params: data,
     });
   },
   // 创建训练模型

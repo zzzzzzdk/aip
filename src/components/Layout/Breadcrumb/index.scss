@@ -1,0 +1,7 @@
+.breadcrumb-container {
+  .ant-breadcrumb-link {
+    &>a {
+      display: inline;
+    }
+  }
+}

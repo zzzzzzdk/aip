@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const trainingDetailsJson = require("./json/trainingDetails.json");
 
-router.all("/training-model/list", (req, res, next) => {
+router.get("/training-model/list", (req, res, next) => {
   // 获取分页参数
   const page = parseInt(req.body.page) || 1; // 默认第一页
   const pageSize = parseInt(req.body.pageSize) || 10; // 默认每页10条数据
@@ -181,7 +181,7 @@ router.all("/training-model/list", (req, res, next) => {
   // 返回分页结果
   res.json({
     code: 20000,
-    total: total,
+    total: 200,
     data: paginatedData,
   });
 });

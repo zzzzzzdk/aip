@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Descriptions, Layout, message } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getQueryString } from "@/utils";
+import { getQueryString, getParams } from "@/utils";
 import { useRequest } from "@/hooks";
 import ajax from "@/services";
 import * as echarts from "echarts";
@@ -95,7 +95,12 @@ const TrainingResultDetails = () => {
   }, [chartInstance, taskDetail]);
 
   const handleBack = () => {
-    navigate("/training-model");
+    const params = getParams(window.location.search);
+    if (params.form) {
+      navigate(`/training-model?form=${params.form}`);
+    } else {
+      navigate("/training-model");
+    }
   };
 
   return (

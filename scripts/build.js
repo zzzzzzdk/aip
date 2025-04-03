@@ -26,6 +26,9 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
+const simpleGit = require('simple-git');
+
+const git = simpleGit();
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -46,90 +49,117 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 const argv = process.argv.slice(2);
 const writeStatsJson = argv.indexOf('--stats') !== -1;
 
-// Generate configuration
-const config = configFactory('production');
-
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
 const { checkBrowsers } = require('react-dev-utils/browsersHelper');
-checkBrowsers(paths.appPath, isInteractive)
-  .then(() => {
-    // First, read the current file sizes in build directory.
-    // This lets us display how much they changed later.
-    return measureFileSizesBeforeBuild(paths.appBuild);
-  })
-  .then(previousFileSizes => {
-    // Remove all content but keep the directory so that
-    // if you're in it, you don't end up in Trash
-    fs.emptyDirSync(paths.appBuild);
-    // Merge with the public folder
-    copyPublicFolder();
-    // Start the webpack build
-    return build(previousFileSizes);
-  })
-  .then(
-    ({ stats, previousFileSizes, warnings }) => {
-      if (warnings.length) {
-        console.log(chalk.yellow('Compiled with warnings.\n'));
-        console.log(warnings.join('\n\n'));
-        console.log(
-          '\nSearch for the ' +
+
+let config = {}
+
+async function run() {
+  let version = null;
+  let name = null
+  let url = null
+  let data = ""
+  try {
+    name = await git.getConfig('user.name')
+    url = await git.getConfig('remote.origin.url')
+    version = await git.branch()
+    data = `${name.value},${url.value},`
+    Object.keys(version.branches).forEach(key => {
+      if (version.branches[key].current) {
+        data += `${version.branches[key].name},${version.branches[key].commit}`
+      }
+    });
+  } catch (e) {
+    console.log(e)
+  }
+
+  // Generate configuration
+  config = configFactory('production', data);
+
+
+  checkBrowsers(paths.appPath, isInteractive)
+    .then(() => {
+      // First, read the current file sizes in build directory.
+      // This lets us display how much they changed later.
+      return measureFileSizesBeforeBuild(paths.appBuild);
+    })
+    .then(previousFileSizes => {
+      // Remove all content but keep the directory so that
+      // if you're in it, you don't end up in Trash
+      fs.emptyDirSync(paths.appBuild);
+      // Merge with the public folder
+      copyPublicFolder();
+      // Start the webpack build
+      return build(previousFileSizes);
+    })
+    .then(
+      ({ stats, previousFileSizes, warnings }) => {
+        if (warnings.length) {
+          console.log(chalk.yellow('Compiled with warnings.\n'));
+          console.log(warnings.join('\n\n'));
+          console.log(
+            '\nSearch for the ' +
             chalk.underline(chalk.yellow('keywords')) +
             ' to learn more about each warning.'
-        );
-        console.log(
-          'To ignore, add ' +
+          );
+          console.log(
+            'To ignore, add ' +
             chalk.cyan('// eslint-disable-next-line') +
             ' to the line before.\n'
-        );
-      } else {
-        console.log(chalk.green('Compiled successfully.\n'));
-      }
+          );
+        } else {
+          console.log(chalk.green('Compiled successfully.\n'));
+        }
 
-      console.log('File sizes after gzip:\n');
-      printFileSizesAfterBuild(
-        stats,
-        previousFileSizes,
-        paths.appBuild,
-        WARN_AFTER_BUNDLE_GZIP_SIZE,
-        WARN_AFTER_CHUNK_GZIP_SIZE
-      );
-      console.log();
-
-      const appPackage = require(paths.appPackageJson);
-      const publicUrl = paths.publicUrlOrPath;
-      const publicPath = config.output.publicPath;
-      const buildFolder = path.relative(process.cwd(), paths.appBuild);
-      printHostingInstructions(
-        appPackage,
-        publicUrl,
-        publicPath,
-        buildFolder,
-        useYarn
-      );
-    },
-    err => {
-      const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';
-      if (tscCompileOnError) {
-        console.log(
-          chalk.yellow(
-            'Compiled with the following type errors (you may want to check these before deploying your app):\n'
-          )
+        console.log('File sizes after gzip:\n');
+        printFileSizesAfterBuild(
+          stats,
+          previousFileSizes,
+          paths.appBuild,
+          WARN_AFTER_BUNDLE_GZIP_SIZE,
+          WARN_AFTER_CHUNK_GZIP_SIZE
         );
-        printBuildError(err);
-      } else {
-        console.log(chalk.red('Failed to compile.\n'));
-        printBuildError(err);
-        process.exit(1);
+        console.log();
+
+        const appPackage = require(paths.appPackageJson);
+        const publicUrl = paths.publicUrlOrPath;
+        const publicPath = config.output.publicPath;
+        const buildFolder = path.relative(process.cwd(), paths.appBuild);
+        printHostingInstructions(
+          appPackage,
+          publicUrl,
+          publicPath,
+          buildFolder,
+          useYarn
+        );
+      },
+      err => {
+        const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';
+        if (tscCompileOnError) {
+          console.log(
+            chalk.yellow(
+              'Compiled with the following type errors (you may want to check these before deploying your app):\n'
+            )
+          );
+          printBuildError(err);
+        } else {
+          console.log(chalk.red('Failed to compile.\n'));
+          printBuildError(err);
+          process.exit(1);
+        }
       }
-    }
-  )
-  .catch(err => {
-    if (err && err.message) {
-      console.log(err.message);
-    }
-    process.exit(1);
-  });
+    )
+    .catch(err => {
+      if (err && err.message) {
+        console.log(err.message);
+      }
+      process.exit(1);
+    });
+}
+
+run()
+
 
 // Create the production build and print the deployment instructions.
 function build(previousFileSizes) {
@@ -184,7 +214,7 @@ function build(previousFileSizes) {
           console.log(
             chalk.yellow(
               '\nTreating warnings as errors because process.env.CI = true.\n' +
-                'Most CI servers set it automatically.\n'
+              'Most CI servers set it automatically.\n'
             )
           );
           return reject(new Error(filteredWarnings.join('\n\n')));

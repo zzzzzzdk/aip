@@ -29,9 +29,76 @@ import "./index.scss";
 const { Dragger } = Upload;
 const { getDataset, uploadFile, importDataset } = ajax.dataset;
 
+const explainData = {
+  image: {
+    image: [
+      "支持图片格式：jpg、jpeg、png、bmp",
+      "图片分辨率限制：64px*64px≤图片分辨率≤4096px*4096px",
+      "图片名称长度≤200字符",
+      "图片名称不可以包含特殊符号：$、%、&",
+      "单张图片大小≤20MB",
+      "支持同时上传多张图片，建议单次上传图片数据≤500张",
+    ],
+    folder: [
+      "支持图片格式：jpg、jpeg、png、bmp",
+      "图片分辨率限制：64px*64px≤图片分辨率≤4096px*4096px",
+      "图片名称长度≤200字符",
+      "图片名称不可以包含特殊符号：$、%、&",
+      "单张图片大小≤20MB",
+      "建议单次上传图片数据≤500张",
+    ],
+    zip: [
+      "支持图片格式：jpg、jpeg、png、bmp",
+      "图片分辨率限制：64px*64px≤图片分辨率≤4096px*4096px",
+      "图片名称长度≤200字符",
+      "图片名称不可以包含特殊符号：$、%、&",
+      "单张图片大小≤20MB",
+      "压缩包大小≤5GB；支持压缩包格式：zip",
+    ],
+  },
+  video: {
+    image: [
+      "支持视频格式：mp4；编码方式：H.264和H.265",
+      "视频分辨率限制：1280px*720px≤视频分辨率≤3264px*2448px",
+      "视频名称长度≤200字符",
+      "视频名称不可以包含特殊符号：$、%、&",
+      "单个视频时长≤10s",
+      "支持同时上传多个视频，建议单次上传视频数据≤100个",
+    ],
+    folder: [
+      "支持视频格式：mp4；编码方式：H.264和H.265",
+      "视频分辨率限制：1280px*720px≤视频分辨率≤3264px*2448px",
+      "视频名称长度≤200字符",
+      "视频名称不可以包含特殊符号：$、%、&",
+      "单个视频时长≤10s",
+    ],
+    zip: [
+      "支持视频格式：mp4；编码方式：H.264和H.265",
+      "视频分辨率限制：1280px*720px≤视频分辨率≤3264px*2448px",
+      "视频名称长度≤200字符",
+      "视频名称不可以包含特殊符号：$、%、&",
+      "单个视频时长≤10s",
+      "压缩包大小≤5GB；支持压缩包格式：zip",
+    ],
+  },
+};
+
+const accept = {
+  image: {
+    image: "image/jpeg,image/png,image/bmp",
+    folder: "",
+    zip: "application/zip",
+  },
+  video: {
+    image: "video/mp4",
+    folder: "",
+    zip: "application/zip",
+  },
+};
+
 const ImportDataModal = (props) => {
   const { visible, onCancel, onOk, importType = "existing", data = {} } = props;
-  const dataType = data.dataType;
+  const dataType = data?.dataType || "image";
 
   const [targetKeys, setTargetKeys] = useState([]);
   const [form] = Form.useForm();
@@ -111,6 +178,7 @@ const ImportDataModal = (props) => {
       return flag || Upload.LIST_IGNORE;
     },
     directory: uploadType === "folder",
+    accept: accept[dataType][uploadType],
   };
 
   const handleOk = () => {
@@ -141,60 +209,67 @@ const ImportDataModal = (props) => {
         message.error(err.message || "导入失败");
       });
   };
-
   const items = [
     {
       key: "existing",
       label: "从已有数据集导入",
       children: (
-        <TableTransfer
-          targetKeys={targetKeys}
-          onChange={handleChange}
-        />
+        <TableTransfer targetKeys={targetKeys} onChange={handleChange} />
       ),
     },
     {
       key: "local",
       label: "导入本地数据",
       children: (
-        <Tabs
-          defaultActiveKey={"image"}
-          onChange={(key) => setUploadType(key)}
-          activeKey={uploadType}
-        >
-          <Tabs.TabPane
-            tab={dataType === "image" ? "图片上传" : "视频上传"}
-            key="image"
+        <>
+          <Tabs
+            defaultActiveKey={"image"}
+            onChange={(key) => setUploadType(key)}
+            activeKey={uploadType}
+            className="import-data-modal-content-tabs"
           >
-            <Dragger {...uploadProps}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                点击或拖拽{dataType === "image" ? "图片" : "视频"}
-                文件到此区域上传
-              </p>
-            </Dragger>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="文件夹上传" key="folder">
-            <Dragger {...uploadProps}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">点击或拖拽文件夹到此区域上传</p>
-            </Dragger>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="压缩包上传" key="zip">
-            <Dragger {...uploadProps}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                点击或拖拽压缩包文件到此区域上传
-              </p>
-            </Dragger>
-          </Tabs.TabPane>
-        </Tabs>
+            <Tabs.TabPane
+              tab={dataType === "image" ? "图片上传" : "视频上传"}
+              key="image"
+            >
+              <Dragger {...uploadProps}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  点击或拖拽{dataType === "image" ? "图片" : "视频"}
+                  文件到此区域上传
+                </p>
+              </Dragger>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="文件夹上传" key="folder">
+              <Dragger {...uploadProps}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">点击或拖拽文件夹到此区域上传</p>
+              </Dragger>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="压缩包上传" key="zip">
+              <Dragger {...uploadProps}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  点击或拖拽压缩包文件到此区域上传
+                </p>
+              </Dragger>
+            </Tabs.TabPane>
+          </Tabs>
+          <div className="explain-data">
+            <p>上传说明</p>
+            <ul>
+              {explainData[dataType][uploadType].map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </>
       ),
     },
     {
@@ -286,6 +361,7 @@ const ImportDataModal = (props) => {
   useEffect(() => {
     if (visible) {
       setActiveTab(importType);
+      setUploadType("image");
       // if (activeTab === "existing") {
       //   getData();
       // }
@@ -303,8 +379,8 @@ const ImportDataModal = (props) => {
       okText="确认导入"
       cancelText="取消"
     >
-    
       <Tabs
+        className="import-data-modal-tabs"
         defaultActiveKey={activeTab}
         items={items}
         activeKey={activeTab}

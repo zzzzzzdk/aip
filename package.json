@@ -67,6 +67,7 @@
     "sass": "^1.57.1",
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
+    "simple-git": "^3.27.0",
     "source-map-loader": "^3.0.0",
     "style-loader": "^3.3.1",
     "styled-components": "^6.1.16",
