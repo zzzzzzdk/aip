@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Row, Col, Statistic, Table, Transfer } from "antd";
+import { Card, Row, Col, Statistic, Table, Transfer, Button } from "antd";
 import {
   UserOutlined,
   ShoppingCartOutlined,
@@ -8,6 +8,7 @@ import {
 import uniqBy from "lodash/uniqBy";
 import difference from "lodash/difference";
 import ajax from "@/services";
+import SmartVideoPlayer from "./components/SmartVideoPlayer";
 import "./index.scss";
 const { getDataset, uploadFile, importDataset } = ajax.dataset;
 
@@ -174,6 +175,9 @@ class TableTransfer extends React.Component {
 
 const Dashboard = () => {
   const [targetKeys, setTargetKeys] = useState([]);
+  const handleOpenVlc = () => {
+
+  }
 
   return (
     <div className="dashboard-page">
@@ -207,6 +211,7 @@ const Dashboard = () => {
           </Card>
         </Col>
       </Row>
+      <SmartVideoPlayer videoUrl="http://localhost:8000/h-265.mp4" />
       <TableTransfer
         targetKeys={targetKeys}
         onChange={(targetKeys, direction, moveKeys) => {
