@@ -49,6 +49,7 @@ const LayoutComponent = () => {
   // ];
 
   const handleMenuClick = ({ key }) => {
+    console.log(key);
     navigate(key);
   };
 
