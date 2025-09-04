@@ -71,8 +71,15 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       position: relative;
       z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       .ant-breadcrumb {
         line-height: 60px;
+      }
+      .language-switcher {
+        display: flex;
+        align-items: center;
       }
     }
 

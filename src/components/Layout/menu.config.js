@@ -7,6 +7,7 @@ import {
   UserOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import '@/lang/index.js';
 
 export const menuItems = [
   // {

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Layout, Menu } from "antd";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Dropdown } from "antd";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import {
   HomeOutlined,
@@ -20,10 +20,40 @@ const LayoutComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [currentLang, setCurrentLang] = useState('zhcn');
 
   const activeKey = useSelector((state) => {
     return state.comment.routerData.name;
   });
+
+  // 语言列表
+  const languages = [
+    { key: 'zhcn', name: '中文' },
+    { key: 'en', name: 'English' },
+    { key: 'ja', name: '日本語' },
+    { key: 'ko', name: '한국어' },
+    { key: 'ru', name: 'Русский' },
+  ];
+
+  // 切换语言
+  const changeLanguage = (lang) => {
+    setCurrentLang(lang);
+    // 保存语言设置到localStorage
+    localStorage.setItem('lang', lang);
+    if (window.$changeLang) {
+      window.$changeLang(lang);
+      window.location.reload()
+    }
+  };
+
+  // 初始化语言
+  useEffect(() => {
+    // 从localStorage获取语言设置
+    const savedLang = localStorage.getItem('lang');
+    if (savedLang) {
+      setCurrentLang(savedLang);
+    }
+  }, []);
   
   // const menuItems = [
   //   {
@@ -53,6 +83,11 @@ const LayoutComponent = () => {
     navigate(key);
   };
 
+  const menuData = menuItems.map(item => ({
+    ...item,
+    // label: window.$$t(item.label),
+  }))
+
   return (
     <Layout className="app-layout">
       <Sider
@@ -75,7 +110,7 @@ const LayoutComponent = () => {
           theme="dark"
           mode="inline"
           selectedKeys={[activeKey]}
-          items={menuItems}
+          items={menuData}
           onClick={handleMenuClick}
         />
         <div className="trigger" onClick={() => setCollapsed(!collapsed)}>
@@ -88,6 +123,22 @@ const LayoutComponent = () => {
         >
           <div className="breadcrumb-container">
             <Breadcrumb />
+            <div className="language-switcher">
+              <Dropdown
+                menu={{
+                  items: languages.map(lang => ({
+                    key: lang.key,
+                    label: lang.name,
+                    onClick: () => changeLanguage(lang.key)
+                  })),
+                }}
+                trigger={['click']}
+              >
+                <span className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
+                  {languages.find(lang => lang.key === currentLang)?.name}
+                </span>
+              </Dropdown>
+            </div>
           </div>
           <Content className="app-content">
             <Outlet />

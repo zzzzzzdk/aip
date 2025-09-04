@@ -25,6 +25,7 @@ const ForkTsCheckerWebpackPlugin =
     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
     : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const webpackPluginsAutoI18n = require('webpack-auto-i18n-plugin')
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
 const appPackageJson = require(paths.appPackageJson);
@@ -85,6 +86,20 @@ const hasJsxRuntime = (() => {
     return false;
   }
 })();
+
+const { YoudaoTranslator } = require('webpack-auto-i18n-plugin')
+const i18nPlugin = new webpackPluginsAutoI18n.default({
+    globalPath: './src/lang',
+    namespace: 'lang',
+    distPath: './dist/assets',
+    distKey: 'index',
+    targetLangList: ['en', 'ko', 'ja', 'ru'],
+    originLang: 'zh-cn',
+    translator: new YoudaoTranslator({
+        appId: '5e526a700eef5d9b',
+        appKey: '9xJwgwRiJMBDRGtiIaBM34HKL1J8D5df'
+    })
+})
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -790,6 +805,7 @@ module.exports = function (webpackEnv, data) {
           },
         },
       }),
+      i18nPlugin
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter

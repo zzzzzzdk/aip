@@ -9,6 +9,7 @@ import "./assets/css/common.scss";
 import reportWebVitals from "./reportWebVitals";
 import "@ant-design/v5-patch-for-react-19";
 import AntdConfigProvider from "./AntdConfigProvider";
+import './lang/index.js'
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
